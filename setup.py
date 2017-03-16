@@ -27,7 +27,7 @@ try:
     import pypandoc
     readme = pypandoc.convert('README.md', 'rst')
 except Exception as e:
-    print 'ERROR', e.message
+    print('ERROR', e.message)
     readme = open('README.md').read()
 
 with open('LICENSE') as f:

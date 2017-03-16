@@ -16,7 +16,7 @@ class SalesforceBulkTest(unittest.TestCase):
     def tearDown(self):
         if hasattr(self, 'bulk'):
             for job_id in self.jobs:
-                print "Closing job: %s" % job_id
+                print("Closing job: %s" % job_id)
                 self.bulk.close_job(job_id)
 
     def test_raw_query(self):
@@ -31,13 +31,13 @@ class SalesforceBulkTest(unittest.TestCase):
         self.assertIsNotNone(re.match("\w+", batch_id))
 
         while not bulk.is_batch_done(job_id, batch_id):
-            print "Job not done yet..."
-            print bulk.batch_status(job_id, batch_id)
+            print("Job not done yet...")
+            print(bulk.batch_status(job_id, batch_id))
             time.sleep(2)
 
         self.results = ""
         def save_results(tfile, **kwargs):
-            print "in save results"
+            print("in save results")
             self.results = tfile.read()
 
         flag = bulk.get_batch_results(job_id, batch_id, callback = save_results)
@@ -74,7 +74,7 @@ class SalesforceBulkTest(unittest.TestCase):
         self.callback_count = 0
         def save_results2(rows, **kwargs):
             self.results = rows
-            print rows
+            print(rows)
             self.callback_count += 1
 
         batch = len(results) / 3
@@ -127,9 +127,9 @@ class SalesforceBulkTest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    username = raw_input("Salesforce username: ")
-    password = raw_input("Salesforce password: ")
-    security_token = raw_input("Salesforce security token: ")
+    username = input("Salesforce username: ")
+    password = input("Salesforce password: ")
+    security_token = input("Salesforce security token: ")
 
     sessionId, host = SalesforceBulkipy.login_to_salesforce_using_username_password(username=username,
                                                                                     password=password,

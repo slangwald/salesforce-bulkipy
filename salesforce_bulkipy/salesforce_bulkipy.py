@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 from tempfile import TemporaryFile
 from collections import namedtuple
 from httplib2 import Http
@@ -6,10 +6,10 @@ from . import bulk_states
 
 import xml.etree.ElementTree as ET
 import simple_salesforce
-import urlparse
+import urllib.parse
 import requests
 
-import StringIO
+import io
 import re
 import time
 import csv
@@ -73,7 +73,7 @@ class SalesforceBulkipy(object):
     def headers(self, values={}):
         default = {"X-SFDC-Session": self.sessionId,
                    "Content-Type": "application/xml; charset=UTF-8"}
-        for k, val in values.iteritems():
+        for k, val in values.items():
             default[k] = val
         return default
 
@@ -162,7 +162,7 @@ class SalesforceBulkipy(object):
         ct = ET.SubElement(root, "contentType")
         ct.text = contentType
 
-        buf = StringIO.StringIO()
+        buf = io.StringIO()
         tree = ET.ElementTree(root)
         tree.write(buf, encoding="UTF-8")
         return buf.getvalue()
@@ -173,7 +173,7 @@ class SalesforceBulkipy(object):
         state = ET.SubElement(root, "state")
         state.text = "Closed"
 
-        buf = StringIO.StringIO()
+        buf = io.StringIO()
         tree = ET.ElementTree(root)
         tree.write(buf, encoding="UTF-8")
         return buf.getvalue()
@@ -185,7 +185,7 @@ class SalesforceBulkipy(object):
         state = ET.SubElement(root, "state")
         state.text = "Aborted"
 
-        buf = StringIO.StringIO()
+        buf = io.StringIO()
         tree = ET.ElementTree(root)
         tree.write(buf, encoding="UTF-8")
         return buf.getvalue()
@@ -212,7 +212,7 @@ class SalesforceBulkipy(object):
         return batch_id
 
     def split_csv(self, csv, batch_size):
-        csv_io = StringIO.StringIO(csv)
+        csv_io = io.StringIO(csv)
         batches = []
 
         for i, line in enumerate(csv_io):
@@ -323,7 +323,7 @@ class SalesforceBulkipy(object):
 
     def job_status(self, job_id=None):
         job_id = job_id or self.lookup_job_id(job_id)
-        uri = urlparse.urljoin(self.endpoint + "/",
+        uri = urllib.parse.urljoin(self.endpoint + "/",
                                'job/{0}'.format(job_id))
         response = requests.get(uri, headers=self.headers())
         if response.status_code != 200:
@@ -390,7 +390,7 @@ class SalesforceBulkipy(object):
         if not self.is_batch_done(job_id, batch_id):
             return False
 
-        uri = urlparse.urljoin(
+        uri = urllib.parse.urljoin(
             self.endpoint + "/",
             "job/{0}/batch/{1}/result".format(
                 job_id, batch_id),
@@ -431,7 +431,7 @@ class SalesforceBulkipy(object):
         job_id = job_id or self.lookup_job_id(batch_id)
         logger = logger or (lambda message: None)
 
-        uri = urlparse.urljoin(
+        uri = urllib.parse.urljoin(
             self.endpoint + "/",
             "job/{0}/batch/{1}/result/{2}".format(
                 job_id, batch_id, result_id),
